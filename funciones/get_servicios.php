@@ -1,35 +1,21 @@
 <?php
-include '..\..\config.php';
+header('Content-Type: application/json');
+include '../config.php';
 
-// Verificar si se ha recibido el ID del UPS por GET
-if(isset($_GET['ups_id'])) {
-    $ups_id = $_GET['ups_id'];
+$sql = "SELECT su.id, CONCAT(s.nombre, ' - ', u.nombre) AS nombre
+        FROM servicio_ups su
+        INNER JOIN servicios s ON su.servicio_id = s.id
+        INNER JOIN ups u ON su.ups_id = u.id
+        WHERE s.activo = 1 AND u.activo = 1 AND su.ups_id = " . UPS_ACTIVA_ID;
 
-    // Consultar la tabla de Servicio UPS para obtener los servicios asociados al UPS especificado
-    $sql = "SELECT servicios.id, servicios.nombre
-            FROM servicio_ups
-            INNER JOIN servicios ON servicio_ups.servicio_id = servicios.id
-            WHERE servicio_ups.ups_id = $ups_id";
-    $result = $conn->query($sql);
+$result = $conn->query($sql);
+$servicios = [];
 
-    // Crear un array para almacenar los servicios
-    $servicios = array();
-
-    // Iterar sobre los resultados y agregarlos al array de servicios
-    while($row = $result->fetch_assoc()) {
-        $servicio = array(
-            'id' => $row['id'],
-            'nombre' => $row['nombre']
-        );
-        array_push($servicios, $servicio);
-    }
-
-    // Devolver los servicios en formato JSON
-    echo json_encode($servicios);
-} else {
-    echo "No se ha recibido el ID del UPS";
+while ($row = $result->fetch_assoc()) {
+    $servicios[] = [
+        'id' => $row['id'],
+        'nombre' => $row['nombre']
+    ];
 }
 
-// Cerrar la conexión
-$conn->close();
-?>
+echo json_encode($servicios);

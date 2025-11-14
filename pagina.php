@@ -13,11 +13,4 @@ if (isset($_get['p']))
           //code block
       }
  }
-
-
-
-
-
-
-
 ?>

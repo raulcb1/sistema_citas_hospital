@@ -1,0 +1,5 @@
+[17-Jun-2025 23:46:49 Europe/Berlin] PHP Fatal error:  Uncaught ArgumentCountError: The number of variables must match the number of parameters in the prepared statement in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\admin\reporte_programacion.php:26
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\admin\reporte_programacion.php(26): mysqli_stmt->bind_param('ss', '2025-06-01', '2025-06-30')
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\admin\reporte_programacion.php on line 26

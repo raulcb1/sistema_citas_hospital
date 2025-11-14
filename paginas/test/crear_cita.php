@@ -1,0 +1,353 @@
+<?php
+session_start();
+include '../../config.php';
+
+// Verificar permisos
+if ($_SESSION['rol'] != 'admin' && $_SESSION['rol'] != 'recepcion') {
+    header("Location: sin_permisos.php");
+    exit();
+}
+
+// Obtener pacientes y servicios activos
+$pacientes = $conn->query("SELECT id, CONCAT(nombre, ' ', apellido_p) AS nombre FROM pacientes");
+$servicios = $conn->query("SELECT id, nombre FROM servicios WHERE activo = 1");
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Nueva Cita</title>
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+    <link rel="stylesheet" href="../../plugins/fullcalendar/main.min.css">
+</head>
+
+<body class="hold-transition sidebar-mini">
+    <div class="container-fluid mt-6">
+        <h1>Registrar Nueva Cita</h1>
+
+        <form id="formCita">
+            <!-- Selección de Paciente -->
+            <!-- lista los pacientes en un combo box 
+            <div class="form-group">
+                <label>Paciente:</label>
+                <select name="paciente_id" class="form-control" required>
+                    <?php while($paciente = $pacientes->fetch_assoc()): ?>
+                    <option value="<?= $paciente['id'] ?>"><?= $paciente['nombre'] ?></option>
+                    <?php endwhile; ?>
+                </select>
+            </div>-->
+
+            <div class="form-group">
+                <div class="row mb-6">
+                    <label for="dni_paciente">DNI del Paciente:</label>
+                    <?php //echo "Ruta del script en ejecución: " . __FILE__; ?>
+                    <?php //echo "Directorio del script en ejecución: " . __DIR__; ?>
+                    <input type="text" id="dni_paciente" name="dni_paciente" required>
+                    <button type="button" onclick="getDatosPaciente()">Buscar</button>
+                </div>
+                <div class="row mb-6">
+                    <div id="paciente-info">
+                        <!-- Aquí se mostrará la información del paciente -->
+                    </div>
+                </div>
+
+                <!-- Servicios Seleccionados -->
+                <div class="row mb-12">
+                    <h4>Servicios Agendados</h4>
+                    <table class="table table-bordered" id="tblServicios">
+                        <thead class="bg-light">
+                            <tr>
+                                <th>Servicio</th>
+                                <th>Fecha</th>
+                                <th>Hora</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+
+                <div class="row mb-12">
+                    <!-- Selector de Servicios -->
+                    <div class="card mb-12">
+                        <div class="card-header bg-primary">
+                            <h3 class="card-title">Selección de Servicios y Horarios</h3>
+                        </div>
+                        <div class="card-body">
+
+                                    <select id="selectServicio" class="form-control">
+                                        <?php while($servicio = $servicios->fetch_assoc()): ?>
+                                        <option value="<?= $servicio['id'] ?>"><?= $servicio['nombre'] ?></option>
+                                        <?php endwhile; ?>
+                                    </select>
+
+
+                            <!-- Calendario -->
+                            <div class="row mb-4">
+                                <div class="col-md-4">
+                                    <div class="alert alert-info">
+                                        <i class="fas fa-info-circle"></i> Haz clic en una fecha para seleccionar un horario
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <div id="calendario" style="min-height: 600px;"></div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="fas fa-save"></i> Guardar Cita Completa
+            </button>
+    </div>
+    </form>
+
+    <!-- Modal Horarios -->
+    <div class="modal fade" id="modalHorarios">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title">Horarios Disponibles</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body" id="listaHorarios"></div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../plugins/jquery/jquery.min.js"></script>
+    <script src="../../plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="../../plugins/fullcalendar/6.1.8/locales-all.global.min.js"></script>
+    <script src="../../plugins/fullcalendar/6.1.8/index.global.min.js"></script>
+    <script src="../../plugins/fullcalendar/6.1.8/daygrid/index.global.min.js"></script>
+    <script src="../../plugins/fullcalendar/6.1.8/interaction/index.global.min.js"></script>
+
+    <script>
+    function getDatosPaciente() {
+        var dniPaciente = document.getElementById('dni_paciente').value;
+        $.ajax({
+            url: '../../funciones/get_paciente.php',
+            method: 'POST',
+            data: {
+                dni_paciente: dniPaciente
+            },
+            dataType: 'json',
+            success: function(response) {
+                if (response.success) {
+                    var pacienteInfo = `
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>DNI</th>
+                                        <th>Apellidos y Nombres</th>
+                                        <th>Teléfono</th>
+                                        <th>Seguro</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>${response.data.dni}</td>
+                                        <td>${response.data.apellido_p} ${response.data.apellido_m}, ${response.data.nombre}</td>
+                                        <td>${response.data.telefono}</td>
+                                        <td>${response.data.id}</td>
+                                    </tr>
+                                </tbody>
+                            </table>`;
+                    var pacienteIdSeleccionado = `
+                            <input type="hidden" id="paciente_id" name="paciente_id" value="${response.data.id}">
+                        `;
+                    document.getElementById('paciente-info').innerHTML = pacienteInfo;
+                    document.getElementById('pacienteIdSeleccionado').innerHTML = pacienteIdSeleccionado;
+                } else {
+                    document.getElementById('paciente-info').innerHTML = '<p>Paciente no encontrado</p>';
+                }
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                $('#paciente-info').empty().html(
+                    `<tr><td colspan="5">${textStatus}: ${errorThrown}</td></tr>`
+                );
+                alert("Hubo un error: " + errorThrown + "\n" + jqXHR
+                    .responseText); // Opcional: muestra alerta con el error
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        let calendar;
+        let serviciosSeleccionados = [];
+        let servicioActualId = $('#selectServicio').val();
+
+        // 1. Función para inicializar/actualizar calendario
+        const inicializarCalendario = (servicioId) => {
+            if (calendar) calendar.destroy();
+
+            calendar = new FullCalendar.Calendar(document.getElementById('calendario'), {
+                initialView: 'dayGridMonth',
+                locale: 'es',
+                dateClick: handleDateClick,
+                events: function(fetchInfo, successCallback) {
+                    // Construir la URL incluyendo todos los parámetros
+                    const url =`../../funciones/get_asignaciones.php?servicio_id=${servicioId}&start=${fetchInfo.startStr}&end=${fetchInfo.endStr}`;
+
+                    fetch(url)
+                        .then(response => response.json())
+                        .then(data => successCallback(data))
+                        .catch(error => console.error('Error:', error));
+                },
+                eventDidMount: function(info) {
+                    info.el.style.backgroundColor = info.event.extendedProps.disponible ?
+                        '#28a745' : '#dc3545';
+                    info.el.style.opacity = info.event.extendedProps.disponible ? '1' : '0.5';
+                }
+            });
+
+            calendar.render();
+        };
+
+        // 2. Manejar clic en fecha
+        const handleDateClick = (info) => {
+            if (info.event?.extendedProps?.disponible === false) {
+                Swal.fire('No disponible', 'Esta fecha está completamente ocupada', 'warning');
+                return;
+            }
+
+            servicioActualId = $('#selectServicio').val();
+            fetchHorariosDisponibles(info.dateStr, servicioActualId);
+        };
+
+        // 3. Obtener horarios disponibles
+        const fetchHorariosDisponibles = (fecha, servicioId) => {
+            $('#listaHorarios').html(
+                '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>');
+            $('#modalHorarios').modal('show');
+
+            fetch(`funciones/get_horarios_disponibles.php?servicio_id=${servicioId}&fecha=${fecha}`)
+                .then(response => response.json())
+                .then(horarios => {
+                    let html = '<div class="list-group">';
+                    if (horarios.length === 0) {
+                        html += '<div class="alert alert-warning">No hay horarios disponibles</div>';
+                    } else {
+                        horarios.forEach(hora => {
+                            html += `
+                            <button type="button" 
+                                    class="list-group-item list-group-item-action hora-btn"
+                                    data-hora="${hora}">
+                                ${hora}
+                            </button>`;
+                        });
+                    }
+                    html += '</div>';
+                    $('#listaHorarios').html(html);
+                });
+        };
+
+        // 4. Selección de hora
+        $(document).on('click', '.hora-btn', function() {
+            const hora = $(this).data('hora');
+            const servicioNombre = $('#selectServicio option:selected').text();
+            const fecha = $('#modalHorarios').data('fecha');
+
+            // Validar duplicados
+            const existe = serviciosSeleccionados.some(s =>
+                s.servicio_id == servicioActualId &&
+                s.fecha == fecha &&
+                s.hora == hora
+            );
+
+            if (existe) {
+                Swal.fire('Error', 'Este horario ya fue seleccionado', 'error');
+                return;
+            }
+
+            // Agregar a tabla
+            $('#tblServicios tbody').append(`
+            <tr data-servicio="${servicioActualId}" data-fecha="${fecha}" data-hora="${hora}">
+                <td>${servicioNombre}</td>
+                <td>${fecha}</td>
+                <td>${hora}</td>
+                <td>
+                    <button class="btn btn-danger btn-sm btn-quitar">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </td>
+            </tr>
+        `);
+
+            // Guardar en array
+            serviciosSeleccionados.push({
+                servicio_id: servicioActualId,
+                fecha: fecha,
+                hora: hora
+            });
+
+            $('#modalHorarios').modal('hide');
+        });
+
+        // 5. Quitar servicio
+        $(document).on('click', '.btn-quitar', function() {
+            const row = $(this).closest('tr');
+            const index = serviciosSeleccionados.findIndex(s =>
+                s.servicio_id == row.data('servicio') &&
+                s.fecha == row.data('fecha') &&
+                s.hora == row.data('hora')
+            );
+
+            serviciosSeleccionados.splice(index, 1);
+            row.remove();
+        });
+
+        // 6. Cambiar servicio -> Actualizar calendario
+        $('#selectServicio').change(function() {
+            servicioActualId = $(this).val();
+            inicializarCalendario(servicioActualId);
+        });
+
+        // 7. Enviar formulario
+        $('#formCita').submit(function(e) {
+            e.preventDefault();
+
+            if (serviciosSeleccionados.length === 0) {
+                Swal.fire('Error', 'Debe seleccionar al menos un servicio', 'error');
+                return;
+            }
+
+            const formData = {
+                paciente_id: $('[name="paciente_id"]').val(),
+                servicios: serviciosSeleccionados
+            };
+
+            fetch('guardar_cita.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success) {
+                        window.location.href = 'citas.php';
+                    } else {
+                        Swal.fire('Error', result.error || 'Error desconocido', 'error');
+                    }
+                });
+        });
+
+        // Inicializar calendario al cargar
+        inicializarCalendario(servicioActualId);
+    });
+    </script>
+</body>
+
+</html>

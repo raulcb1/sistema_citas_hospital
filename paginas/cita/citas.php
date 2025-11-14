@@ -10,89 +10,160 @@ function eliminarCita($id) {
         return false;
     }
 }
+
+// Consulta principal de citas
+$query = "SELECT c.id, p.apellido_p, p.apellido_m, p.nombre, p.dni, c.fecha_cita, c.motivo as motivo
+          FROM cita c
+          JOIN pacientes p ON c.paciente_id = p.id
+          JOIN servicio_ups s ON c.servicio_ups_id = s.id
+          JOIN servicios sv ON servicio_ups_id = sv.id
+          ORDER BY c.fecha_cita DESC";
+
+$result = $conn->query($query);
 ?>
-<?php if(isset($mensaje)): ?>
-        <div class="alert alert-info"><?php echo $mensaje; ?></div>
-        <?php endif; ?>
 <section class="content-header">
+    <?php if(isset($mensaje)): ?>
+    <div class="alert alert-info"><?php echo $mensaje; ?></div>
+    <?php endif; ?>
+
     <div class="container-fluid">
-        <h2>Citas</h2>
+        <h2>Lista de Citas</h2>
     </div>
 </section>
+
 <section class="content">
     <div class="container-fluid">
-        
-        <div class="card">
-            <div class="card-header">
-                <h3 class="card-title">Listado de Citas</h3>
-                <div class="card-tools">
-                    <form action="index.php" method="post">
-                        <input type="hidden" name="pagina" value="paginas/cita/crear_cita.php">
-                        <button type="submit" class="btn btn-block btn-success btn-m">Generar Cita</button>
-                    </form>
-                </div>
-            </div>
-            <div class="card-body">
-            <div class="row">
-            <div class="col-sm-12 col-md-6">
-            <input type="date" id="filtro-fecha"><button class="btn btn-primary btn-sm" id="limpiar-filtro">Limpiar Filtro</button>
-            </div></div>
-            <div class="row"><p></p></div>
-                <!-- <table id="tabla-citas" class="table table-bordered table-sm dataTable"> -->
-                <table id="tabla-citas" name="tabla-citas" class="table table-bordered table-hover">
-                    <?php $_SESSION['datatable'] = "citas";?>
-                    <thead>
-                        <tr>
-                            <th>FECHA</th>
-                            <th>PACIENTE</th>
-                            <th>DNI</th>
-                            <!-- <th>EESS</th> -->
-                            <th>SERVICIO</th>
-                            <th>TURNO</th>
-                            <th>ACCIONES</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                            // Consultar la tabla de Citas y obtener los datos
-                            $sql = "SELECT 
-                                        c.id, 
-                                        p.apellido_p, 
-                                        p.apellido_m, 
-                                        p.nombre AS nombre_p, 
-                                        p.dni, 
-                                        u.nombre AS nombre_ups, 
-                                        s.nombre as nombre_servicio, 
-                                        s.turno, 
-                                        c.fecha_cita 
-                                    FROM asignacion_citas c 
-                                    INNER JOIN pacientes p ON c.paciente_id = p.id 
-                                    INNER JOIN servicio_ups su ON c.servicio_id = su.id 
-                                    INNER JOIN ups u ON su.ups_id = u.id 
-                                    INNER JOIN servicios s ON su.servicio_id = s.id
-                                    ORDER BY c.fecha_cita ASC";
-                            $result = $conn->query($sql);
+        <div class="d-flex justify-content-between align-items-center mb-3">
 
-                            // Mostrar los datos en la tabla
-                            if ($result->num_rows > 0) {
-                                while($row = $result->fetch_assoc()) {
-                                    echo "<tr>";
-                                    echo "<td>" . $row["fecha_cita"] . "</td>";
-                                    echo "<td>" . $row["apellido_p"] . " " . $row["apellido_m"] . ", " . $row["nombre_p"] . "</td>";
-                                    echo "<td>" . $row["dni"] . "</td>";
-                                    //echo "<td>" . $row["nombre_ups"] . "</td>";
-                                    echo "<td>" . $row["nombre_servicio"] . "</td>";
-                                    echo "<td>" . $row["turno"] . "</td>";
-                                    echo "<td><a href=\"?eliminar=" . $row["id"] . "\" class=\"btn btn-danger btn-xs\">Eliminar</a></td>";
-                                    echo "</tr>";
-                                }
-                            } else {
-                                echo "<tr><td colspan='9'>No se encontraron citas</td></tr>";
-                            }
-                        ?>
-                    </tbody>
-                </table>
-            </div>
+            <form action="index.php" method="post">
+                <input type="hidden" name="pagina" value="crear_cita">
+                <button type="submit" class="btn btn-block btn-success btn-m">Generar Cita</button>
+            </form>
         </div>
+
+        <div class="col-sm-12 col-md-6">
+            <input type="date" id="filtro-fecha"><button class="btn btn-primary btn-sm m-2" id="limpiar-filtro">Limpiar
+                Filtro</button>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <style>
+        .tabla-citas {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .tabla-citas th,
+        .tabla-citas td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .tabla-citas th {
+            background-color: #f8f9fa;
+        }
+
+        .expand-row {
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .expand-row:hover {
+            background-color: #f1f1f1;
+        }
+
+        .detalles-servicios {
+            background-color: #f8f9fa;
+        }
+
+        .sub-table {
+            width: 95%;
+            margin: 10px auto;
+            border-collapse: collapse;
+        }
+
+        .sub-table th {
+            background-color: #e9ecef;
+        }
+        </style>
+        <table id="tabla-citas" name="tabla-citas" class="table table-bordered table-hover">
+            <?php $_SESSION['datatable'] = "citas";?>
+            <thead>
+                <tr>
+                    <th>Fecha</th>
+                    <th>Paciente</th>
+                    <th>DNI</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php while($cita = $result->fetch_assoc()): ?>
+                <tr class="expand-row" data-id="<?= $cita['id'] ?>">
+                    <td><?= date('d/m/Y', strtotime($cita['fecha_cita'])) ?></td>
+                    <?php $nombre_paciente = $cita['apellido_p'] . ' ' . $cita['apellido_m'] . ', ' . $cita['nombre']; ?>
+                    <td><?= htmlspecialchars($nombre_paciente) ?></td>
+                    <td><?= $cita['dni'] ?></td>
+                    <td><?= htmlspecialchars($cita['motivo']) ?></td>
+                </tr>
+                <tr id="detalles-<?= $cita['id'] ?>" class="detalles-servicios" style="display: none;">
+                <td>&nbsp;</td>
+                    <td colspan="3">
+                        <?php
+                            $query_servicios = "SELECT s.id, s.nombre, a.fecha_cita , ec.estado
+                                                FROM asignacion_citas a
+                                                JOIN servicios s ON a.servicio_id = s.id
+                                                join estado_cita ec ON a.estado_cita_id = ec.id
+                                                WHERE a.cita_id = {$cita['id']}"; // Consulta de servicios asignados
+                            
+                            $servicios = $conn->query($query_servicios);
+                            ?>
+                        <table class="sub-table">
+                            <thead>
+                                <tr>
+                                    <th>Servicio Asignado</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while($servicio = $servicios->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= htmlspecialchars($servicio['nombre']) ?></td>
+                                    <td><?= date('d/m/Y', strtotime($servicio['fecha_cita'])) ?></td>
+                                    <td>Programado</td>
+                                    <td>
+                                        <a href="?eliminar=<?= $servicio['id'] ?>"
+                                            class="btn btn-danger btn-xs">Eliminar</a>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+                <?php endwhile; ?>
+            </tbody>
+        </table>
+        <script>
+        function toggleDetalles(id) {
+            const detalleRow = document.getElementById(`detalles-${id}`);
+            detalleRow.style.display = detalleRow.style.display === 'none' ? 'table-row' : 'none';
+
+            // Rotar ícono (opcional)
+            const mainRow = detalleRow.previousElementSibling;
+            mainRow.classList.toggle('expanded');
+        }
+        // Manejar clic en filas expandibles
+        $('#tabla-citas tbody').on('click', 'tr.expand-row', function() {
+            var id = $(this).data('id');
+            var detalleRow = $('#detalles-' + id);
+            detalleRow.toggle();
+            table.draw(); // Redibujar la tabla para ajustar el layout
+        });
+        </script>
     </div>
 </section>

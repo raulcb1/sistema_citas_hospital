@@ -1,0 +1,82 @@
+[13-Mar-2025 18:57:13 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[13-Mar-2025 19:06:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\guardar_cita.php on line 13
+[13-Mar-2025 19:06:21 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\guardar_cita.php on line 14
+[13-Mar-2025 19:07:04 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[13-Mar-2025 23:38:36 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:31:48 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:31:50 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:13 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:15 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:15 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:15 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:15 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:32:46 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[14-Mar-2025 00:35:57 Europe/Berlin] PHP Fatal error:  Uncaught ValueError: mysqli_result::fetch_all(): Argument #1 ($mode) must be one of MYSQLI_NUM, MYSQLI_ASSOC, or MYSQLI_BOTH in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php:60
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php(60): mysqli_result->fetch_all(7)
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 60
+[18-Mar-2025 17:54:50 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 5
+[18-Mar-2025 17:54:50 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 5
+[18-Mar-2025 17:54:53 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5
+[18-Mar-2025 17:54:53 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5
+[18-Mar-2025 17:55:00 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\crear_cita.php on line 6
+[18-Mar-2025 17:55:00 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\crear_cita.php on line 6
+[18-Mar-2025 17:55:18 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5
+[18-Mar-2025 17:55:18 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5
+[19-Mar-2025 23:42:03 Europe/Berlin] PHP Fatal error:  Uncaught mysqli_sql_exception: Table 'citas_hpc.horarios_servicio' doesn't exist in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\horario_servicios.php:70
+Stack trace:
+#0 C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\horario_servicios.php(70): mysqli->query('\r\n    SELECT h....')
+#1 {main}
+  thrown in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\horario_servicios.php on line 70
+[28-Mar-2025 17:45:44 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\guardar_cita.php on line 13
+[28-Mar-2025 17:45:44 Europe/Berlin] PHP Warning:  Trying to access array offset on value of type null in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\guardar_cita.php on line 14
+[28-Mar-2025 17:45:44 Europe/Berlin] PHP Warning:  foreach() argument must be of type array|object, null given in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\guardar_cita.php on line 26
+[28-May-2025 18:36:07 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 5
+[28-May-2025 18:36:07 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\citas.php on line 5
+[28-May-2025 18:38:17 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5
+[28-May-2025 18:38:17 Europe/Berlin] PHP Warning:  Undefined array key "rol" in C:\xampp\htdocs\citas_hpc\v2.2d\paginas\test\a.php on line 5

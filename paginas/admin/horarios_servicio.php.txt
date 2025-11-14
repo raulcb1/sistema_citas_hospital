@@ -1,0 +1,246 @@
+<?php
+session_start();
+include '../../config.php';
+
+// Verificar permisos de administrador
+if ($_SESSION['rol'] != 'admin') {
+    header("Location: sin_permisos.php");
+    exit();
+}
+
+// Procesar formulario
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $servicio_id = $_POST['servicio_id'];
+    $dias = $_POST['dias'] ?? [];
+    $hora_inicio = $_POST['hora_inicio'];
+    $hora_fin = $_POST['hora_fin'];
+    $intervalo = $_POST['intervalo'];
+    $capacidad = $_POST['capacidad'];
+    $activo = isset($_POST['activo']) ? 1 : 0;
+
+    // Validar datos
+    $errores = [];
+    
+    if (empty($dias)) {
+        $errores[] = "Seleccione al menos un día";
+    }
+    
+    if (strtotime($hora_fin) <= strtotime($hora_inicio)) {
+        $errores[] = "La hora final debe ser mayor a la hora inicial";
+    }
+    
+    if (empty($errores)) {
+        // Crear string de días
+        $dias_semana = implode(',', $dias);
+        
+        // Insertar en base de datos
+        $stmt = $conn->prepare("
+            INSERT INTO horarios_servicio (
+                servicio_id, 
+                dias_semana, 
+                hora_inicio, 
+                hora_fin, 
+                intervalo_min, 
+                capacidad_por_intervalo, 
+                activo
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        ");
+        
+        $stmt->bind_param(
+            "isssiii",
+            $servicio_id,
+            $dias_semana,
+            $hora_inicio,
+            $hora_fin,
+            $intervalo,
+            $capacidad,
+            $activo
+        );
+        
+        if ($stmt->execute()) {
+            $mensaje = "Horario guardado exitosamente!";
+        } else {
+            $error = "Error al guardar: " . $conn->error;
+        }
+    }
+}
+
+// Obtener servicios y horarios existentes
+$servicios = $conn->query("SELECT id, nombre FROM servicios WHERE activo = 1");
+$horarios = $conn->query("
+    SELECT h.*, s.nombre as servicio 
+    FROM horarios_servicio h
+    JOIN servicios s ON h.servicio_id = s.id
+    ORDER BY s.nombre, h.dias_semana
+");
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Configuración de Horarios</title>
+    <link rel="stylesheet" href="../../dist/css/adminlte.min.css">
+    <style>
+        .dias-container { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .dias-label { cursor: pointer; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .dias-label:hover { background-color: #f8f9fa; }
+    </style>
+</head>
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <div class="content-wrapper">
+        <section class="content">
+            <div class="container-fluid">
+                <h2 class="my-4">Configurar Horarios de Servicios</h2>
+
+                <!-- Formulario -->
+                <div class="card card-primary">
+                    <div class="card-header">
+                        <h3 class="card-title">Nuevo Horario</h3>
+                    </div>
+                    <form method="post">
+                        <div class="card-body">
+                            <?php if (!empty($errores)): ?>
+                                <div class="alert alert-danger">
+                                    <?php foreach ($errores as $e) echo "<p>$e</p>"; ?>
+                                </div>
+                            <?php endif; ?>
+                            
+                            <?php if (isset($mensaje)): ?>
+                                <div class="alert alert-success"><?= $mensaje ?></div>
+                            <?php endif; ?>
+
+                            <div class="form-group">
+                                <label>Servicio:</label>
+                                <select name="servicio_id" class="form-control" required>
+                                    <?php while ($s = $servicios->fetch_assoc()): ?>
+                                        <option value="<?= $s['id'] ?>"><?= $s['nombre'] ?></option>
+                                    <?php endwhile; ?>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Días de la semana:</label>
+                                <div class="dias-container">
+                                    <?php 
+                                    $dias_semana = [
+                                        'Lunes', 'Martes', 'Miércoles', 
+                                        'Jueves', 'Viernes', 'Sábado', 'Domingo'
+                                    ];
+                                    foreach ($dias_semana as $dia): ?>
+                                        <label class="dias-label">
+                                            <input type="checkbox" name="dias[]" value="<?= $dia ?>"> <?= $dia ?>
+                                        </label>
+                                    <?php endforeach; ?>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Hora Inicio:</label>
+                                        <input type="time" name="hora_inicio" 
+                                               class="form-control" step="300" 
+                                               value="08:00" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Hora Fin:</label>
+                                        <input type="time" name="hora_fin" 
+                                               class="form-control" step="300" 
+                                               value="17:00" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Intervalo (minutos):</label>
+                                        <input type="number" name="intervalo" 
+                                               class="form-control" min="5" max="120" 
+                                               value="30" required>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label>Capacidad por intervalo:</label>
+                                        <input type="number" name="capacidad" 
+                                               class="form-control" min="1" 
+                                               value="1" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-check">
+                                <input type="checkbox" name="activo" 
+                                       class="form-check-input" id="activo" checked>
+                                <label class="form-check-label" for="activo">Horario activo</label>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Horario
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Lista de horarios existentes -->
+                <div class="card card-secondary mt-4">
+                    <div class="card-header">
+                        <h3 class="card-title">Horarios Configurados</h3>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Servicio</th>
+                                    <th>Días</th>
+                                    <th>Horario</th>
+                                    <th>Intervalo</th>
+                                    <th>Capacidad</th>
+                                    <th>Estado</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php while ($h = $horarios->fetch_assoc()): ?>
+                                <tr>
+                                    <td><?= $h['servicio'] ?></td>
+                                    <td><?= str_replace(',', ', ', $h['dias_semana']) ?></td>
+                                    <td><?= date('H:i', strtotime($h['hora_inicio'])) ?> - <?= date('H:i', strtotime($h['hora_fin'])) ?></td>
+                                    <td><?= $h['intervalo_min'] ?> min</td>
+                                    <td><?= $h['capacidad_por_intervalo'] ?></td>
+                                    <td>
+                                        <span class="badge badge-<?= $h['activo'] ? 'success' : 'danger' ?>">
+                                            <?= $h['activo'] ? 'Activo' : 'Inactivo' ?>
+                                        </span>
+                                    </td>
+                                </tr>
+                                <?php endwhile; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+
+<script src="plugins/jquery/jquery.min.js"></script>
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script>
+// Mejorar usabilidad de inputs de tiempo
+document.querySelectorAll('input[type="time"]').forEach(input => {
+    input.addEventListener('change', (e) => {
+        const time = e.target.value;
+        const [hours, minutes] = time.split(':');
+        const roundedMinutes = Math.floor(minutes / 5) * 5;
+        e.target.value = `${hours}:${roundedMinutes.toString().padStart(2, '0')}`;
+    });
+});
+</script>
+</body>
+</html>

@@ -1,18 +1,23 @@
 <section class="content-header">
     <div class="container-fluid">
-        <h2>Generar Cita</h2>
+        <h2>Generar Citas</h2>
     </div>
 </section>
 <section class="content">
     <div class="container-fluid">
+
+        <div class="row mb-12">
 
         <label for="dni_paciente">DNI del Paciente:</label>
         <?php //echo "Ruta del script en ejecución: " . __FILE__; ?>
         <?php //echo "Directorio del script en ejecución: " . __DIR__; ?>
         <input type="text" id="dni_paciente" name="dni_paciente" required>
         <button type="button" onclick="getDatosPaciente()">Buscar</button>
+        </div>
+        <div class="row mb-12">
         <div id="paciente-info">
             <!-- Aquí se mostrará la información del paciente -->
+        </div>
         </div>
         <br><br>
 
